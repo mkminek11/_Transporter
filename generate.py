@@ -35,6 +35,7 @@ class Grid:
     batch = pyglet.graphics.Batch()
     bg = pyglet.graphics.OrderedGroup(0)
     fg = pyglet.graphics.OrderedGroup(1)
+    vehicles = pyglet.graphics.OrderedGroup(2)
     tex = pyglet.image.ImageGrid(pyglet.image.load("ground.png"), 5, 5)
     buildings = pyglet.image.ImageGrid(pyglet.image.load("buildings.png"), 1, 3)
     tiles = ["WWWW", "WGWW", "WGGW", "GGGW", "GGGG", "WWWW", "GWWW", "GGWW", "GGWG", "GGGG", "WWWW", "WWWG", "GWWG", "GWGG", "GGGG", "WWWW", "WWGW", "WWGG", "WGGG", "GGGG", "GGGG", "GGGG", "GGGG", "GGGG", "GGGG"]
