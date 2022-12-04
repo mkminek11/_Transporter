@@ -1,6 +1,7 @@
 from typing import Literal, Union
 from pathlib import Path as pth
 from generate import Grid
+from math import sin, cos
 import pyglet
 
 Path = Union[pth, str]
@@ -12,8 +13,11 @@ class Vehicle:
     def __init__(self, image:Path):
         self.MAX_CARGO_AMOUNT:int
         self.MAXIMUM_EXCEED:Literal["not load", "error"]
+        self.CAN_GO_THROUGH:list[Literal["G", "W"]]
+        self.PATH:Literal["straight", "blocks"] = "blocks"
         self.id = Vehicle._id
         Vehicle._id += 1
+        self.type = "non-specified vehicle"
 
         self.cargo_amount = 0
 
@@ -30,6 +34,12 @@ class Vehicle:
     def move_by(self, dx, dy) -> None:
         self.sprite.x += dx
         self.sprite.y += dy
+
+    def move_dir(self, dir, speed):
+        dx = cos(dir) * speed
+        dy = sin(dir) * speed
+        self.rotate_to(dir)
+        self.move_by(dx, dy)
 
     def rotate_to(self, deg) -> None:
         self.sprite.rotation = deg
@@ -49,7 +59,44 @@ class Vehicle:
                 case "not load":
                     pass
                 case "error":
-                    raise OverflowError(f"<Vehicle {self.id}> Too much cargo to fit in this vehicle")
+                    raise OverflowError(f"<{self.type} {self.id}> Too much cargo to fit in this vehicle")
 
     def get_cargo_amount(self) -> int:
         return self.cargo_amount
+
+class Car1(Vehicle):
+    def __init__(self, image:Path, capacity:int):
+        super().__init__(image)
+
+        self.type = "car 1"
+        self.MAX_CARGO_AMOUNT = capacity
+        self.CAN_GO_THROUGH = ["G"]
+        self.MAXIMUM_EXCEED = "not load"
+
+class Car2(Vehicle):
+    def __init__(self, image:Path, capacity:int):
+        super().__init__(image)
+
+        self.type = "car 2"
+        self.MAX_CARGO_AMOUNT = capacity
+        self.CAN_GO_THROUGH = ["G"]
+        self.MAXIMUM_EXCEED = "not load"
+
+class Ship(Vehicle):
+    def __init__(self, image:Path, capacity:int):
+        super().__init__(image)
+
+        self.type = "ship"
+        self.MAX_CARGO_AMOUNT = capacity
+        self.CAN_GO_THROUGH = ["W"]
+        self.MAXIMUM_EXCEED = "not load"
+
+class Plane(Vehicle):
+    def __init__(self, image:Path, capacity:int):
+        super().__init__(image)
+
+        self.type = "plane"
+        self.MAX_CARGO_AMOUNT = capacity
+        self.CAN_GO_THROUGH = ["G", "W"]
+        self.PATH = "straight"
+        self.MAXIMUM_EXCEED = "not load"
