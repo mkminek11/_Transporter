@@ -1,11 +1,11 @@
 import pyglet
-from generate import *
-from play import *
-from transport import *
+from lib.generate import *
+from lib.play import *
+from lib.transport import *
 
 w = pyglet.window.Window(resizable=True)
 
-buttons_list = list(spritesheet("buttons.png", 3, 2))
+buttons_list = list(spritesheet("img/buttons.png", 3, 2))
 l = List(w, [buttons_list[0], buttons_list[1]])
 g = Grid(100, 100)
 

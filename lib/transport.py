@@ -1,6 +1,6 @@
 from typing import Literal, Union
 from pathlib import Path as pth
-from generate import Grid
+from lib.generate import Grid
 from math import sin, cos, radians
 import pyglet
 
