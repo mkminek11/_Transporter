@@ -1,17 +1,20 @@
 from random import choice
+from typing import Literal
 import pyglet
 
 class Tile:
-    def __init__(self, texture, pattern:str="GGGG"):
+    def __init__(self, i, pattern:str="GGGG"):
         self.pattern = pattern
-        self.bg = pyglet.sprite.Sprite(texture, batch=Grid.batch, group=Grid.bg)
+        self.bg_i = i
+        self.bg = pyglet.sprite.Sprite(Grid.texHD[i], batch=Grid.batch, group=Grid.bg)
         self.fg = pyglet.sprite.Sprite(Grid.buildings[2], batch=Grid.batch, group=Grid.fg)
         self.have_fg = False
+        self.size = 1
 
     def move(self, x:int=0, y:int=0, scale:float=1.0):
         self.bg.x = x
         self.bg.y = y
-        self.bg.scale = scale
+        self.bg.scale = scale / self.size
         self.bg.visible = True
         self.fg.x = x
         self.fg.y = y
@@ -36,17 +39,23 @@ class Grid:
     bg = pyglet.graphics.OrderedGroup(0)
     fg = pyglet.graphics.OrderedGroup(1)
     vehicles = pyglet.graphics.OrderedGroup(2)
-    tex = pyglet.image.ImageGrid(pyglet.image.load("./img/ground.png"), 5, 5)
-    buildings = pyglet.image.ImageGrid(pyglet.image.load("./img/buildings.png"), 1, 3)
+    texHD =  pyglet.image.ImageGrid(pyglet.image.load("./img/ground_HD.png"),  5, 5)
+    texUHD = pyglet.image.ImageGrid(pyglet.image.load("./img/ground_UHD.png"), 5, 5)
+    texLD =  pyglet.image.ImageGrid(pyglet.image.load("./img/ground_LD.png"),  5, 5)
+    buildings = pyglet.image.ImageGrid(pyglet.image.load("./img/buildings_HD.png"), 1, 3)
     tiles = ["WWWW", "WGWW", "WGGW", "GGGW", "GGGG", "WWWW", "GWWW", "GGWW", "GGWG", "GGGG", "WWWW", "WWWG", "GWWG", "GWGG", "GGGG", "WWWW", "WWGW", "WWGG", "WGGG", "GGGG", "GGGG", "GGGG", "GGGG", "GGGG", "GGGG"]
+    _size = {"UHD":4, "HD":1, "LD":0.25}
+    _sizer = {k:v for v, k in _size.items()}  # reversed _size
+    tex = {"UHD":texUHD, "HD":texHD, "LD":texLD}
 
     def __init__(self, width:int=3, height:int=4):
-        Grid.g = [[Tile(Grid.tex[4]) for _ in range(width)] for _ in range(height)]
+        Grid.g = [[Tile(4) for _ in range(width)] for _ in range(height)]
         self._generate()
         self._place_base()
         self.scale = 1
         self.x = 0
         self.y = 0
+        self.size = 1    # 1=HD, 0.25=LD, 4=UHD
     
     def _generate(self):
         for rn, row in enumerate(Grid.g):
@@ -78,10 +87,10 @@ class Grid:
                     cell.hide()
         Grid.batch.draw()
 
-    def _place(self, texture, pattern:str="GGGG", x:int=0, y:int=0):
+    def _place(self, texture_i, pattern:str="GGGG", x:int=0, y:int=0):
         g = Grid.g[y][x]
         g.pattern = pattern
-        g.bg.image = texture
+        g.bg.image = Grid.texHD[texture_i]
 
     def random(self, x:int=0, y:int=0):
         available = Grid.tiles[:]
@@ -102,11 +111,21 @@ class Grid:
                 else:
                     available.remove(a)
         r = choice(available)
-        self._place(Grid.tex[Grid.tiles.index(r)], r, x, y)
+        self._place(Grid.tiles.index(r), r, x, y)
 
     def set_scale(self, scale:float=1.0, mouse_x:int=0, mouse_y:int=0):
         if scale <= 0.1 or scale >= 3:
             return
+        
+        if scale < 0.45:
+            self.size = 0.25   # LD
+        elif scale > 1:
+            self.size = 4      # UHD
+        else:
+            self.size = 1      # HD
+
+        self._resize_tiles(Grid._sizer[self.size])
+        
         gw = len(Grid.g[0])
         gh = len(Grid.g)
 
@@ -121,7 +140,14 @@ class Grid:
         self.x = mouse_x - (w1/w * wn)
         self.y = mouse_y - (h1/h * hn)
         self.scale = scale
-        
+
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+
+    def _resize_tiles(self, size:Literal["UHD", "HD", "LD"]):
+        for col in Grid.g:
+            for cell in col:
+                cell.bg.image = Grid.tex[size][cell.bg_i]
+                cell.size = Grid._size[size]
+        print(size)
