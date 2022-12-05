@@ -1,7 +1,7 @@
 from typing import Literal, Union
 from pathlib import Path as pth
 from generate import Grid
-from math import sin, cos
+from math import sin, cos, radians
 import pyglet
 
 Path = Union[pth, str]
@@ -11,10 +11,11 @@ class Vehicle:
     _batch = pyglet.graphics.Batch()
 
     def __init__(self, image:Path):
-        self.MAX_CARGO_AMOUNT:int
-        self.MAXIMUM_EXCEED:Literal["not load", "error"]
-        self.CAN_GO_THROUGH:list[Literal["G", "W"]]
-        self.PATH:Literal["straight", "blocks"] = "blocks"
+        self.MAX_CARGO_AMOUNT :int
+        self.MAXIMUM_EXCEED   :Literal["not load", "error"]
+        self.CAN_GO_THROUGH   :list[Literal["G", "W"]]
+        self.PATH             :Literal["straight", "blocks"] = "blocks"
+        
         self.id = Vehicle._id
         Vehicle._id += 1
         self.type = "non-specified vehicle"
@@ -22,7 +23,9 @@ class Vehicle:
         self.cargo_amount = 0
 
         self.image = pyglet.image.load(image)
-        self.sprite = pyglet.sprite.Sprite(self.image, batch=Vehicle._batch, group=Grid.vehicles)
+        self.image.anchor_x = self.image.width//2
+        self.image.anchor_y = self.image.height//2
+        self.sprite = pyglet.sprite.Sprite(self.image, 32, 32, batch=Vehicle._batch, group=Grid.vehicles)
 
     def draw(self) -> None:
         self.sprite.draw()
@@ -35,10 +38,9 @@ class Vehicle:
         self.sprite.x += dx
         self.sprite.y += dy
 
-    def move_dir(self, dir, speed):
-        dx = cos(dir) * speed
-        dy = sin(dir) * speed
-        self.rotate_to(dir)
+    def move_dir(self, speed):
+        dx = sin(radians(self.sprite.rotation)) * speed
+        dy = cos(radians(self.sprite.rotation)) * speed
         self.move_by(dx, dy)
 
     def rotate_to(self, deg) -> None:

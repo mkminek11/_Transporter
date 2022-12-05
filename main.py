@@ -1,6 +1,7 @@
 import pyglet
 from generate import *
 from play import *
+from transport import *
 
 w = pyglet.window.Window(resizable=True)
 
@@ -8,11 +9,14 @@ buttons_list = list(spritesheet("buttons.png", 3, 2))
 l = List(w, [buttons_list[0], buttons_list[1]])
 g = Grid(100, 100)
 
+# c = Car1("car1.png", 10)
+
 @w.event
 def on_draw():
     w.clear()
     g.draw(w.width, w.height-l.bg.height)
     l.draw()
+    # c.draw()
 
 @w.event
 def on_mouse_scroll(x, y, scroll_x, scroll_y):
@@ -44,5 +48,17 @@ def on_mouse_press(x, y, button, modifiers):
 @w.event
 def on_resize(w, h):
     l.update(w, h)
+
+@w.event
+def on_key_press(s, m):
+    # if s == pyglet.window.key.RIGHT:
+    #     c.rotate_by(90)
+    # elif s == pyglet.window.key.LEFT:
+    #     c.rotate_by(-90)
+    # elif s == pyglet.window.key.UP:
+    #     c.move_dir(g.scale * 64)
+    # elif s == pyglet.window.key.DOWN:
+    #     c.move_dir(-g.scale * 64)
+    pass
 
 pyglet.app.run()
