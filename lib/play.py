@@ -18,7 +18,7 @@ class List:
 
     def _update_buttons(self, w, h):
         in_row = (w) // (self.item_width+self.padding)
-        buttons = ["road", "quit"]
+        buttons = ["road", "quit", "map "]    # THIS MAY RAISE AN ERROR - just add new command
         match self.place:
             case "top":
                 self.bg.width = w

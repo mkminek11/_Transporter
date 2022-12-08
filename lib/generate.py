@@ -33,6 +33,12 @@ class Tile:
         if self.have_fg:
             self.fg.visible = True
 
+    def set_bg(self, size=None, bg_id=None):
+        size =  1         if size  == None else size
+        bg_id = self.bg_i if bg_id == None else bg_id
+        self.bg.image = Grid.tex[size][bg_id]
+        self.bg_i = bg_id
+
 class Grid:
     g = []
     batch = pyglet.graphics.Batch()
@@ -90,7 +96,8 @@ class Grid:
     def _place(self, texture_i, pattern:str="GGGG", x:int=0, y:int=0):
         g = Grid.g[y][x]
         g.pattern = pattern
-        g.bg.image = Grid.texHD[texture_i]
+        # g.bg.image = Grid.texHD[texture_i]
+        g.set_bg("HD", texture_i)
 
     def random(self, x:int=0, y:int=0):
         available = Grid.tiles[:]
@@ -114,7 +121,7 @@ class Grid:
         self._place(Grid.tiles.index(r), r, x, y)
 
     def set_scale(self, scale:float=1.0, mouse_x:int=0, mouse_y:int=0):
-        if scale <= 0.1 or scale >= 3:
+        if scale <= 0.1 or scale >= 2:
             return
         
         if scale < 0.45:
@@ -148,6 +155,6 @@ class Grid:
     def _resize_tiles(self, size:Literal["UHD", "HD", "LD"]):
         for col in Grid.g:
             for cell in col:
-                cell.bg.image = Grid.tex[size][cell.bg_i]
+                # cell.bg.image = Grid.tex[size][cell.bg_i]
+                cell.set_bg(size)
                 cell.size = Grid._size[size]
-        print(size)
