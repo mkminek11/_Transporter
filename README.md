@@ -18,6 +18,11 @@ At first, I created point of the game and rules:
 ### Now
 - The terrain generates
 - Your factory is placed
-- You can see a list of two buttons:
-  - Build a road (does nothing)
-  - Quit game (quits the game)
+- You can see a list of three buttons:
+  - Build a road - does nothing (should toggle to build-a-rouad mode where you can build roads)
+  - Quit game - quits the game
+  - Open a map - does nothing (should toggle to map mode where you can view the whole terrain)
+- And a sidebar:
+  - Base - does nothing (should move camera to your base)
+  - Plus - zooms in
+  - Minus - zooms out
