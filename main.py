@@ -35,7 +35,7 @@ def on_mouse_motion(x, y, dx, dy):
 @w.event
 def on_mouse_press(x, y, button, modifiers):
     action = None
-    for b in l.buttons:
+    for b in l.buttons+s.buttons:
         a = b.check_mouse_over(x, y, True)
         action = a if a != None else action
     match action:
@@ -43,6 +43,10 @@ def on_mouse_press(x, y, button, modifiers):
             w.close()
         case "road":
             pass
+        case "----":
+            g.set_scale(g.scale - 0.5, w.width//2, w.height//2)
+        case "++++":
+            g.set_scale(g.scale + 0.5, w.width//2, w.height//2)
         case None:
             pass
     print(action)

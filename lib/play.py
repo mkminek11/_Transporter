@@ -100,5 +100,3 @@ def spritesheet(image:Union[str, Path], width:int=1, height:int=1):
     a = list(pyglet.image.ImageGrid(pyglet.image.load(image), height, width))
     for col in range(0, len(a)//height):
         yield Button(a[width+col], 0, 0, 0, "noe", image_mouse_on=a[col])
-
-# print(list(spritesheet("S:\\Matysek\\_PROGRAMOVÁNÍ\\Python\\_hry\\_Transporter\\img\\buttons1.png", 3, 2)))
